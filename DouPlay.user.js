@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DouPlay
 // @namespace    https://github.com/ned42/DouPlay
-// @version      0.2
+// @version      0.3
 // @description  豆瓣电影条目页面内添加播放窗口
 // @author       You
 // @match        https://movie.douban.com/subject/*
@@ -10,6 +10,8 @@
 
 'use strict';
 // Your code here...
+
+    var server = "jx.618g.com/?url="
 
     var $ = window.jQuery;
     var newItem = document.createElement("iframe");
@@ -45,7 +47,7 @@
             obj[i].firstElementChild.setAttribute("style","display: inline-block; text-indent: 20px; background: no-repeat url(https://img3.doubanio.com/f/sns/5741f726dfb46d89eb500ed038833582c9c9dcdb/pics/sns/doulist/ic_play_web@2x.png) left center / 16px;");
             var url = obj[i].firstElementChild
             if(url.href != "javascript: void 0;"){
-                url.href = url.href.replace("https://www.douban.com/link2/?url=","https://api.bbbbbb.me/jx/?url=");
+                url.href = url.href.replace("www.douban.com/link2/?url=",server);
                 url.setAttribute("target","playf");
                 url.addEventListener("click",function (){
                     var parentDiv = document.getElementById("mainpic").parentNode.parentNode;
@@ -61,13 +63,21 @@
                 var eps = li.children;
                 for (i = 0; i < eps.length-1; i++){
                     eps[i].href = eps[i].href.replace("http://","https://");
-                    eps[i].href = eps[i].href.replace("www.douban.com/link2/?url=","api.bbbbbb.me/jx/?url=");
+                    eps[i].href = eps[i].href.replace("www.douban.com/link2/?url=",server);
                     eps[i].setAttribute("target","playf");
                     eps[i].setAttribute("id","ss");
                     eps[i].addEventListener("click",function (){
                         newItem.setAttribute("style","width: 100%;height: 300px;margin: 0px 0px 7px -13px;");
                         var parentDiv = document.getElementById("ss").parentNode.parentNode;
                         var c1 = document.getElementById("ss").parentNode;
+                        var tt = document.getElementById("eptitle");
+                        if(!tt){
+                           var playtitle = "<h2 id = 'eptitle'>当前播放 第"+this.innerText+"</h2>"
+                           console.log(playtitle)
+                           li.parentElement.firstElementChild.outerHTML += playtitle
+                           }else{
+                               tt.innerText="当前播放 第"+this.innerText
+                           }
                         parentDiv.insertBefore(newItem, c1);
                     });
                 }
