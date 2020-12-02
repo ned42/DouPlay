@@ -1,86 +1,84 @@
 // ==UserScript==
-// @name         DouPlay
+// @name         DouPlay - 豆瓣电影在线看
 // @namespace    https://github.com/ned42/DouPlay
-// @version      0.3
-// @description  豆瓣电影条目页面内添加播放窗口
-// @author       You
+// @version      0.4
+// @description  movie.douban.com,超轻量豆瓣影视在线播放脚本,在豆瓣电影条目页面内直接添加播放窗口,douban.com
+// @author       ned42
 // @match        https://movie.douban.com/subject/*
-// @grant        none
 // ==/UserScript==
 
 'use strict';
-// Your code here...
+if (!document.querySelector(".bs")) return;//unplayable
 
-    var server = "jx.618g.com/?url="
+const server = "https://jx.618g.com/?url=";
+const $ = window.jQuery;
 
-    var $ = window.jQuery;
-    var newItem = document.createElement("iframe");
-    newItem.setAttribute("id","play");
-    newItem.setAttribute("name","playf");
-    newItem.setAttribute("frameborder","0");
-    newItem.setAttribute("style","width: 100%;height: 300px;");
-    newItem.setAttribute("allowfullscreen","allowfullscreen");
-    newItem.setAttribute("security","restricted");
-    newItem.setAttribute("referrerpolicy","no-referrer");
+const div = document.createElement("div");
+div.setAttribute("id","fm");
+div.setAttribute("style","width: 100%;height:300px;padding-bottom: 15px;");
+const x = document.createElement("input");
+x.setAttribute("type","button");
+x.setAttribute("value"," X ");
+x.setAttribute("style","position: relative;float: right;z-index: 2;");
+const newItem = document.createElement("iframe");
+newItem.setAttribute("id","play");
+newItem.setAttribute("name","playf");
+newItem.setAttribute("frameborder","0");
+newItem.setAttribute("style","width: 100%;height: 300px;");
+newItem.setAttribute("allowfullscreen","allowfullscreen");
+newItem.setAttribute("security","restricted");
+newItem.setAttribute("referrerpolicy","no-referrer");
+newItem.setAttribute("style","width: 100%;height: 300px;position: absolute;");
 
-    var div = document.createElement("div");
-    div.setAttribute("id","fm");
-    div.setAttribute("style","width: 100%;height:300px;padding-bottom: 15px;");
-    var x = document.createElement("input");
-    x.setAttribute("type","button");
-    x.setAttribute("value"," X ");
-    x.setAttribute("style","position: relative;float: right;z-index: 2;");
-    newItem.setAttribute("style","width: 100%;height: 300px;position: absolute;");
-    div.appendChild(x);
-    div.appendChild(newItem);
-    x.addEventListener("click",function (){
-        div.parentNode.removeChild(div);
-    });
-
-
-    var Y = document.querySelectorAll(".bs");
-    if(Y != null){
-        var obj = document.querySelector('.bs').children
-        for (var i = 0; i < obj.length; i++){
-            document.querySelectorAll('.buylink-price')[i].innerText = obj[i].innerText.split(' ')[0];
-            obj[i].firstElementChild.innerText = "DouPlay";
-            obj[i].firstElementChild.setAttribute("style","display: inline-block; text-indent: 20px; background: no-repeat url(https://img3.doubanio.com/f/sns/5741f726dfb46d89eb500ed038833582c9c9dcdb/pics/sns/doulist/ic_play_web@2x.png) left center / 16px;");
-            var url = obj[i].firstElementChild
-            if(url.href != "javascript: void 0;"){
-                url.href = url.href.replace("www.douban.com/link2/?url=",server);
-                url.setAttribute("target","playf");
-                url.addEventListener("click",function (){
-                    var parentDiv = document.getElementById("mainpic").parentNode.parentNode;
-                    var c1 = document.getElementById("mainpic").parentNode;
-                    parentDiv.insertBefore(div, c1);
-                });
-            }
-        }
-        // else this.ep();
-        document.addEventListener('DOMNodeInserted', function() {
-            var li = document.querySelector(".episode-list")
-            if(li != null){
-                var eps = li.children;
-                for (i = 0; i < eps.length-1; i++){
-                    eps[i].href = eps[i].href.replace("http://","https://");
-                    eps[i].href = eps[i].href.replace("www.douban.com/link2/?url=",server);
-                    eps[i].setAttribute("target","playf");
-                    eps[i].setAttribute("id","ss");
-                    eps[i].addEventListener("click",function (){
-                        newItem.setAttribute("style","width: 100%;height: 300px;margin: 0px 0px 7px -13px;");
-                        var parentDiv = document.getElementById("ss").parentNode.parentNode;
-                        var c1 = document.getElementById("ss").parentNode;
-                        var tt = document.getElementById("eptitle");
-                        if(!tt){
-                           var playtitle = "<h2 id = 'eptitle'>当前播放 第"+this.innerText+"</h2>"
-                           console.log(playtitle)
-                           li.parentElement.firstElementChild.outerHTML += playtitle
-                           }else{
-                               tt.innerText="当前播放 第"+this.innerText
-                           }
-                        parentDiv.insertBefore(newItem, c1);
-                    });
-                }
-            }
+let mov = true;
+var dp = function (event) {
+    let self = event.target;
+    let parentDiv,insert,before,tt;
+    switch (self.parentNode.nodeName) {
+        case 'LI':
+            parentDiv=document.getElementById("mainpic").parentNode.parentNode;
+            before=document.getElementById("mainpic").parentNode;
+            insert=div;
+            div.appendChild(x);
+            div.appendChild(newItem);
+            x.addEventListener("click",()=>div.parentNode.removeChild(div));
+            break;
+        case 'DIV':
+            parentDiv=self.parentNode.parentNode;
+            before=self.parentNode;
+            insert=newItem;
+            tt = document.getElementById("eptitle");
+            if(!tt){
+                let playtitle = "<h2 id = 'eptitle'>当前播放 第"+self.innerText+"</h2>"
+                document.querySelector(".cross").outerHTML += playtitle;
+            }else{
+                tt.innerText="当前播放 第"+self.innerText;
+                document.querySelector(".episode-list").querySelectorAll('a').forEach((a)=>a.style.border='');
+            };
+            newItem.setAttribute("style", "width: 100%;height: 300px;margin: 0px 0px 7px -13px;");
+            self.setAttribute("style","border: 1px solid;");
+            break;
+    };
+    parentDiv.insertBefore(insert, before);
+};
+document.querySelector('.bs').querySelectorAll('li').forEach((a)=>{
+    a.children[1].innerText=a.children[0].innerText;
+    a = a.children[0];
+    a.innerText = "DouPlay";
+    a.setAttribute("style","display: inline-block; text-indent: 20px; background: no-repeat url(https://img3.doubanio.com/f/sns/5741f726dfb46d89eb500ed038833582c9c9dcdb/pics/sns/doulist/ic_play_web@2x.png) left center / 16px;");
+    if (a.href == "javascript: void 0;") return;
+    a.href=server+a.href.split('?url=')[1];
+    a.setAttribute("target","playf");
+    a.addEventListener("click",dp);
+    mov = false;
+});
+if(mov){
+     document.addEventListener('DOMNodeInserted', function(event) {
+        if(event.target.className!='play-source') return;
+        document.querySelector(".episode-list").querySelectorAll('a').forEach((a)=>{
+            a.href = server+a.href.split('?url=')[1];
+            a.setAttribute("target","playf");
+            a.addEventListener("click",dp);
         });
-    }
+    });
+};
