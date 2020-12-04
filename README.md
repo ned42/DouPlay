@@ -1,5 +1,5 @@
-# DouPlay豆瓣电影播放脚本
-[![HitCount](http://hits.dwyl.com/ned42/DouPlay.svg)](http://hits.dwyl.com/ned42/DouPlay)
+# DouPlay豆瓣电影播放脚本                         
+![Hits](https://hitcounter.pythonanywhere.com/count/tag.svg?url=https%3A%2F%2Fgithub.com%2Fned42%2FDouPlay)
 
 在豆瓣电影条目页面内直接添加播放窗口
 ## 安装
