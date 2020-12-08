@@ -11,7 +11,6 @@
 if (!document.querySelector(".bs")) return;//unplayable
 
 const server = "https://jx.618g.com/?url=";
-const $ = window.jQuery;
 
 const div = document.createElement("div");
 div.setAttribute("id","fm");
@@ -54,11 +53,11 @@ var dp = function (event) {
             }else{
                 tt.innerText="当前播放 第"+self.innerText;
                 document.querySelector(".episode-list").querySelectorAll('a').forEach((a)=>a.style.border='');
-            };
+            }
             newItem.setAttribute("style", "width: 100%;height: 300px;margin: 0px 0px 7px -13px;");
             self.setAttribute("style","border: 1px solid;");
             break;
-    };
+    }
     parentDiv.insertBefore(insert, before);
 };
 document.querySelector('.bs').querySelectorAll('li').forEach((a)=>{
@@ -81,4 +80,4 @@ if(mov){
             a.addEventListener("click",dp);
         });
     });
-};
+}
